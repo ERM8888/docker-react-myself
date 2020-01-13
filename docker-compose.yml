@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    # Se supone que en build . buscará el Dockerfile, pero en realidad tenemos Dockerfile.dev
+    build:
+      # Context es desde donde se quiere coger los ficheros y carpetas del proyecto
+      context: .
+      # Dockerfile para crear dicha imagen
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    # Volumes del container
+    volumes:
+      # No hagas referencia de este folder
+      - /app/node_modules
+      # El . es el directorio actual
+      - .:/app
+  # Este servicio es para arrancar los tests
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    # Se sobreescribe el startup command
+    command: ["npm", "run", "test"]
