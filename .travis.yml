@@ -1,0 +1,13 @@
+# Se le dice a Travis que se necesita superuser permisos para arrancar este build con docker
+sudo: required
+services:
+  # Se necesita docker preinstalado y Travis instalará docker
+  - docker
+# Pasos que se necesitan hacer antes de ejecutar los tests o el proyecto
+before_install:
+  # Tiene que construir la imagen que se ha definido en Dockerfile.dev y se le da un tag para no utilizar image id
+  - docker build -t kike/docker-react-myself -f Dockerfile.dev .
+# Se le dice a Travis que tiene que ejecutar. Todos los comandos para arrancar el test suite
+script:
+  # Se lanzan los tests. Como npm run test espera a un input del usuario que aquí nunca llegará, se pone -- --coverage
+  - docker run kike/docker-react-myself npm run test -- --coverage
