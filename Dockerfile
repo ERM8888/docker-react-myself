@@ -9,6 +9,9 @@ COPY . .
 RUN npm run build
 # Empieza la segunda fase: Run phase. Docker supone que poniendo FROM se cierra la anterior fase
 FROM nginx
+# Se expone el puerto 80 para que sea utilizado en AWS Beanstalk
+# Para el localhost no hace nada, pero para Beanstalk le dice que tiene que mapear este puerto y lo hace de forma automática
+EXPOSE 80
 # Se quiere copiar desde algo que acabamos de trabajar. El folder de este container donde se copiara depende de la imagen de nginx
 COPY --from=builder /app/build /usr/share/nginx/html
 # No se necesita CMD ya que automaticamente empezará el server
