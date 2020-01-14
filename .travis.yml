@@ -11,3 +11,26 @@ before_install:
 script:
   # Se lanzan los tests. Como npm run test espera a un input del usuario que aquí nunca llegará, se pone -- --coverage
   - docker run kike/docker-react-myself npm run test -- --coverage
+# Seccion para hacer el deploy una vez que se han pasado los tests
+deploy:
+  # Travis viene preconfigurado para que se haga el deploy en AWS haciendo algunos pasos automáticos sin decirle nada
+  provider: elasticbeanstalk
+  # Es la region donde se ha creado Elastic Beanstalk que dependera de como se ha creado
+  region: "us-west-2"
+  # Nombre de la aplicacion que se le ha dado en AWS cuando se ha creado la app
+  app: "docker-react-myself"
+  # Environment name que es el nombre que se le ha dado en AWS cuando se ha creado la app y el env
+  env: "Docker-env"
+  # Nombre del s3 bucket donde pondrá el fichero del build de la aplicacion creado. Es necesario que esté allí ya que elasticbeanstalk lo necesitará
+  # Este bucket ha sido creado con la aplicacion en AWS. Ir a s3 > buscar algo como elasticbeanstalk-<region>-<numbero>
+  # Este bucket se utilizará en todos elasticbeanstalk que son creados
+  bucket_name: "elasticbeanstalk-<region>-<numbero>"
+  # Cada aplicacion tendrá su propio path dentro del butcket. El path es igual al nombre de la aplicacion y se creara la primera vez que se haga el deploy
+  bucket_path: "docker-react-myself"
+  # Para deploy la aplicacion solo cuando la rama master es actualizada
+  on:
+    branch: master
+  # Se añade el access key y el secret key de AWS como variables de entorno que han sido introducidas a Travis
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_id: 
+    secure: "$AWS_SECRET_KEY"
